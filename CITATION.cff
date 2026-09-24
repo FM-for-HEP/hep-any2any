@@ -1,0 +1,68 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper below."
+title: "hep-any2any"
+type: software
+version: 1.0.0
+license: Apache-2.0
+repository-code: "https://github.com/FM-for-HEP/hep-any2any"
+authors:
+  - family-names: Kakati
+    given-names: Nilotpal
+    affiliation: Weizmann Institute of Science
+  - family-names: Murnane
+    given-names: Daniel
+    affiliation: Niels Bohr Institute, University of Copenhagen; Lawrence Berkeley National Laboratory
+  - family-names: Hashemi
+    given-names: Baran
+    affiliation: Max Planck Institute for Mathematics in the Sciences
+  - family-names: Klein
+    given-names: Samuel
+    affiliation: SLAC National Accelerator Laboratory
+  - family-names: Krupa
+    given-names: Jeffrey
+    affiliation: SLAC National Accelerator Laboratory
+  - family-names: Gross
+    given-names: Eilam
+    affiliation: Weizmann Institute of Science
+  - family-names: Heinrich
+    given-names: Lukas
+    affiliation: Technical University of Munich
+  - family-names: Kagan
+    given-names: Michael
+    affiliation: SLAC National Accelerator Laboratory
+preferred-citation:
+  type: article
+  title: "Prompting Particle Physics: Tokenized Multi-modal Foundation Models for Combinatorially Many Tasks"
+  authors:
+    - family-names: Kakati
+      given-names: Nilotpal
+    - family-names: Murnane
+      given-names: Daniel
+    - family-names: Hashemi
+      given-names: Baran
+    - family-names: Klein
+      given-names: Samuel
+    - family-names: Krupa
+      given-names: Jeffrey
+    - family-names: Gross
+      given-names: Eilam
+    - family-names: Heinrich
+      given-names: Lukas
+    - family-names: Kagan
+      given-names: Michael
+  year: 2026
+  notes: "arXiv identifier to follow."
+references:
+  - type: data
+    title: "HEP4M tokenised COCOA single-jet dataset and model checkpoints"
+    doi: 10.5281/zenodo.22917591
+    url: "https://doi.org/10.5281/zenodo.22917591"
+    publisher:
+      name: Zenodo
+    year: 2026
+    license: CC-BY-4.0
+    authors:
+      - family-names: Kakati
+        given-names: Nilotpal
+      - family-names: Murnane
+        given-names: Daniel

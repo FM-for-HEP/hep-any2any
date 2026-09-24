@@ -1,0 +1,34 @@
+n_feat_cont: &n_feat_cont 2
+common_emb_dim: &emb_dim 128
+
+vae_type: mlp_bottleneck
+
+categorical_vars: []
+categorical: {}
+
+
+encoder:
+    init_net_bottleneck:
+        is_bottleneck: true
+        input_size: *n_feat_cont # doesn't support categorical vars
+        output_size: *emb_dim
+        num_blocks: 6
+        thin: 64
+        expansion_factor: 4
+
+
+quantizer:
+    dim: *emb_dim
+    codebook_size: 128
+    heads: 8
+    temperature: 1.
+
+
+decoder:
+    output_net_cont:
+        is_bottleneck: true
+        input_size: *emb_dim
+        output_size: *n_feat_cont
+        num_blocks: 6
+        thin: 64
+        expansion_factor: 4

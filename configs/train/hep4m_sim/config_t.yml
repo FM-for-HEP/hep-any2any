@@ -1,0 +1,73 @@
+project_name: hep-any2any
+run_name: hep4m_sim
+
+device: cuda
+num_devices: 4
+trainer_precision: 'bf16-mixed'
+
+# detector simulation: truth particles -> (track, topo)
+train_sampling:
+  type: inference
+  fixed_input_output_modalities:
+    input: [truthpart]
+    output: [track, topo]
+
+val_sampling:
+  type: inference
+  fixed_input_output_modalities:
+    input: [truthpart]
+    output: [track, topo]
+
+start_idx_train: 0
+start_idx_val: 0
+
+reduce_ds_train: -1
+reduce_ds_val: -1
+
+batchsize_train: 512
+batchsize_val: 128
+accumulate_grad_batches: 8
+
+contiguous_batches: true
+preprocessed_dir: ${HEP4M_TOKENIZED}
+
+num_workers: 6
+persistent_workers: true
+mp_share_strategy: file_system
+
+num_epochs: 5001
+eval_every_n_epoch: 1
+train_log_every_n_steps: 50
+periodic_checkpoint_interval: 50
+
+learning_rate: 4.0e-3
+weight_decay: 0.05
+max_grad_norm: 1.0
+
+scheduler_type: schedulefree
+warmup_steps: 400
+
+base_root_dir: ${HEP4M_RUNS}
+
+loss_config:
+  token_wt: 1.0
+  pos_token_wt: 1.0
+  card_wt: 1.0
+  label_smoothing: 0.1
+  pos_label_smoothing: 0.1
+  card_label_smoothing: 0.1
+  modality_wt: {}
+
+early_stopping:
+  enabled: false
+  monitor: val_total_loss
+  mode: min
+  patience: 5
+  min_delta: 0.001
+
+pflow_eval_every_n_epoch: 1
+pflow_eval_max_batches: 4
+pflow_ind_threshold: 0.45
+
+generative_eval: true
+c2st_epochs: 30

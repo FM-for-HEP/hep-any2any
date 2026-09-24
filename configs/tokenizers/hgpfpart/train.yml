@@ -1,0 +1,36 @@
+project_name: hep-any2any
+run_name: tokenizer_hgpfpart
+
+dataset: singlejet
+
+device: cuda
+num_devices: 1
+
+path_train: |
+    [f'${HEP4M_RAW_TRAIN}/hgpflow/pred_singlejet_{n}_100kseg_bw100.0_merged.root' for n in range(20, 270)]
+path_val: |
+    [f'${HEP4M_RAW_TRAIN}/hgpflow/pred_singlejet_{n}_100kseg_bw100.0_merged.root' for n in range(10, 11)]
+
+reduce_ds_train: -1 # integers (1, ) | all (-1)
+reduce_ds_val  : -1 # integers (1, ) | all (-1)
+
+batchsize_train: 16384
+batchsize_val: 16384
+
+num_workers: 8
+
+num_epochs: 51
+eval_every_n_epoch: 1
+train_log_every_n_steps: 50
+
+learning_rate: 5.0e-4
+weight_decay: 0.05
+
+warmup_step_frac: 0.02
+div_factor: 50.0
+final_div_factor: 100.0
+
+reco_loss_wt: 1
+embedding_loss_wt: 1
+
+base_root_dir : ${HEP4M_RUNS}

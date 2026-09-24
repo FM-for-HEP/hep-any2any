@@ -1,0 +1,56 @@
+embedding_dim: &emb_dim 512
+hidden_dim:    &hid_dim 1024
+enable_flash_attn: &flash_attn false
+
+gpos_token_info:
+    num_gpos_quantizers: 3
+    gpos_vocab_size: 1024
+
+token_encoder:
+    token_comb_type: sum
+    max_sincos_posemb: 256
+    pos_emb_type: sincos
+
+transformer_encoder:
+    embed_dim: *emb_dim
+    num_layers: 12
+    mha_config:
+        enable_flash_attn: *flash_attn
+        num_heads: 8                  # head_dim=64
+    dense_config:
+        embed_dim: *emb_dim
+        hidden_dim: *hid_dim          # 2x MLP
+    out_dim: *emb_dim
+    layer_scale: true
+    apply_norm_after_last_proj: true
+
+transformer_decoder:
+    embed_dim: *emb_dim
+    num_layers: 18
+    mha_config_cross:
+        enable_flash_attn: *flash_attn
+        num_heads: 8
+    mha_config_self:
+        enable_flex_attn: false
+        num_heads: 8
+    dense_config:
+        embed_dim: *emb_dim
+        hidden_dim: *hid_dim          # 2x MLP
+    out_dim: *emb_dim
+    layer_scale: true
+    reverse: true # if true cross-attention is applied before self-attention
+    apply_norm_after_last_proj: true
+
+token_predictor:
+    type: sequential3
+
+cardinality_predictor:
+    input_size: *emb_dim
+    output_size: null
+    hidden_layers: [256]
+    activation: LeakyReLU
+    final_activation: null
+    norm_layer: LayerNorm
+    norm_final_layer: false
+    dropout: 0.0
+    context_size: 0

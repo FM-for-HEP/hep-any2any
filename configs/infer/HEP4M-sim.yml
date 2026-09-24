@@ -1,0 +1,35 @@
+# HEP4M-sim: detector simulation, truth particles -> (topo, track); cardinality argmax,
+# tokens sampled at temperature 1.
+#   python -m hep4m.eval_hep4m -i configs/infer/HEP4M-sim.yml [--gpu -1] [--items 0]
+init:
+  device: cuda
+  gpu: 0                 # -1: CPU
+  precision: highest
+  chunk_size: 64
+  batch_size: 16
+  num_workers: 2
+  output_dir: ${HEP4M_OUTPUT_ROOT}/inference/HEP4M-sim
+
+  model:                 # unpacked by: python -m hep4m.data download --checkpoints HEP4M-sim
+    config_path_m: ${HEP4M_CKPT}/ckpt.HEP4M-sim/config_m.yml
+    checkpoint_path: ${HEP4M_CKPT}/ckpt.HEP4M-sim/model.ckpt
+    modality_dict_path: ${HEP4M_CKPT}/ckpt.HEP4M-sim/modality_dict.yml
+
+items:
+  - info: detector simulation, cardinality argmax, tokens sampled
+    input_modalities: [truthpart]
+    output_modalities: [topo, track]
+    use_truth_cardinality: false
+    card_topk_dict:              {topo: 1, track: 1}     # 1: argmax, -1: sample
+    card_temperature_dict:       {topo: 1.0, track: 1.0}
+    top_k_token_dict:            {topo: -1, track: -1}     # 1: argmax, -1: sample, k: top-k
+    top_k_gpos_token_dict:       {topo: -1, track: -1}
+    temperature_token_dict:      {topo: 1.0, track: 1.0}
+    temperature_gpos_token_dict: {topo: 1.0, track: 1.0}
+    filepath_dict:               # raw ROOT file(s) per modality: inputs and the truth for comparison
+      topo:      "['${HEP4M_RAW_TEST}']"
+      track:     "['${HEP4M_RAW_TEST}']"
+      truthpart: "['${HEP4M_RAW_TEST}']"
+    dir_flag: sim
+    suffix: sampled
+    reduce_ds: -1          # number of events, -1: all

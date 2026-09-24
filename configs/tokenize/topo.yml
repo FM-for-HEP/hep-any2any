@@ -1,0 +1,21 @@
+# Tokenise the topo objects of raw COCOA ROOT files with the frozen topo tokeniser.
+#   python -m hep4m.eval_tokenizer -i configs/tokenize/topo.yml [--gpu -1]
+# Output: ${HEP4M_WORK}/tokenized_root/topo/<dir_flag>/<input file name>
+init:
+  gpu: 0                 # -1: CPU
+  precision: highest
+  chunk_size: 128
+  batch_size: 128
+  num_workers: 0
+  output_dir: ${HEP4M_WORK}/tokenized_root/topo
+
+  model:
+    config_path_v   : ${HEP4M_TOKENIZERS}/vqxtopox256x8x1xxxe8z5xrcs8ljleo/config_v.yml
+    config_path_m   : ${HEP4M_TOKENIZERS}/vqxtopox256x8x1xxxe8z5xrcs8ljleo/config_m.yml
+    checkpoint_path : ${HEP4M_TOKENIZERS}/vqxtopox256x8x1xxxe8z5xrcs8ljleo/checkpoints/epoch=50-val_total_loss=0.0000.ckpt
+
+items:
+  - info: test file singlejet_0
+    input_path: ${HEP4M_RAW_TEST}
+    dir_flag: test
+    reduce_ds: -1        # number of events, -1: all

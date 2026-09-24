@@ -1,0 +1,62 @@
+project_name: hep-any2any
+run_name: nanohep_sim
+base_root_dir: ${HEP4M_RUNS}
+
+# ----- compute -----
+device: cuda
+num_devices: 4
+trainer_precision: bf16-mixed
+num_epochs: 5001
+eval_every_n_epoch: 1
+val_check_interval: 5000
+periodic_checkpoint_interval: 5
+step_checkpoint_interval: 1000
+accumulate_grad_batches: 1
+
+pflow_eval:
+    enabled: true
+    every_n_epochs: 1
+    max_events: 256
+    input_modalities: [truthpart]
+    output_modality: topo
+    output_layout: grouped
+    max_new_tokens: 320
+    batch_size: 32
+    modality_dict_path: ${HEP4M_REPO}/configs/modality_dicts/3mod.yml
+    generative: true
+    c2st_epochs: 30
+
+# ----- model (93M parameters) -----
+gpt_config:
+    block_size: 640  # leaves AR-decode margin past dataset block_size=320
+    vocab_size: null
+    n_layer: 12
+    n_head: 12
+    n_embd: 768
+    dropout: 0.0
+    bias: false
+
+vocab_args:
+    modalities: [topo, track, truthpart]
+
+optimizer_args:
+    learning_rate: 3.0e-4
+    weight_decay: 0.1
+    betas: [0.9, 0.95]
+
+# ----- data -----
+tokenized_root: ${HEP4M_TOKENIZED}
+all_modalities: [topo, track, truthpart]
+block_size: 320
+batch_size: 32
+num_workers: 4
+max_events_train: -1
+max_events_val: 4096
+
+sampling_dict:
+    type: inference
+    fixed_input_output_modalities:
+        input: [truthpart]
+        output: [topo, track]
+    output_layout: grouped
+    input_layout: grouped

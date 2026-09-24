@@ -1,0 +1,20 @@
+topo:
+    config_path_v   : ${HEP4M_TOKENIZERS}/vqxtopox256x8x1xxxe8z5xrcs8ljleo/config_v.yml
+    config_path_m   : ${HEP4M_TOKENIZERS}/vqxtopox256x8x1xxxe8z5xrcs8ljleo/config_m.yml
+    checkpoint_path : ${HEP4M_TOKENIZERS}/vqxtopox256x8x1xxxe8z5xrcs8ljleo/checkpoints/epoch=50-val_total_loss=0.0000.ckpt
+
+    codebook_loss_wts: [1, 1, 1]
+
+track:
+    config_path_v   : ${HEP4M_TOKENIZERS}/vqxtrackx256x8x1xxx1tkosl645s31y/config_v.yml
+    config_path_m   : ${HEP4M_TOKENIZERS}/vqxtrackx256x8x1xxx1tkosl645s31y/config_m.yml
+    checkpoint_path : ${HEP4M_TOKENIZERS}/vqxtrackx256x8x1xxx1tkosl645s31y/checkpoints/epoch=49-val_total_loss=0.0000.ckpt
+
+    codebook_loss_wts: [1, 1, 1]
+
+truthpart:
+    config_path_v   : ${HEP4M_TOKENIZERS}/vqxtrpartx128x8x1xxx3hty86rc6e3c/config_v.yml
+    config_path_m   : ${HEP4M_TOKENIZERS}/vqxtrpartx128x8x1xxx3hty86rc6e3c/config_m.yml
+    checkpoint_path : ${HEP4M_TOKENIZERS}/vqxtrpartx128x8x1xxx3hty86rc6e3c/checkpoints/epoch=50-val_total_loss=0.0000.ckpt
+
+    codebook_loss_wts: [1, 1, 1]

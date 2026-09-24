@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hep-any2any"
+version = "1.0.0"
+description = "Tokenised any-to-any foundation models for collider events: nanoHEP (autoregressive) and HEP4M (parallel)"
+readme = "README.md"
+requires-python = ">=3.11"
+# SPDX licence expression (PEP 639). setuptools >= 77 rejects "License ::" classifiers
+# next to it, so there is no licence classifier.
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+dependencies = [
+    "torch>=2.4,<3",
+    "lightning>=2.4,<3",
+    "numpy>=1.26,<3",
+    "scipy>=1.11,<2",
+    "awkward>=2.6,<3",
+    "uproot>=5.3,<6",
+    "pyyaml>=6.0,<7",
+    "einops>=0.7,<1",
+    # Pinned: 1.23+ clamps cdist at 1e-8, which ties the cell tokeniser's tiny residual
+    # codebooks and changes cell codes at residual levels 2-3. 1.22.0 reproduces the
+    # released token stores.
+    "vector-quantize-pytorch==1.22.0",
+    "schedulefree>=1.2,<2",
+    "tqdm>=4.66",
+    "matplotlib>=3.8,<4",
+    "seaborn>=0.13,<1",
+    "scikit-learn>=1.4,<2",
+    "pillow>=10",
+    "zstandard>=0.22",      # compressed arrays of the released dataset (hep4m.data)
+]
+
+[project.optional-dependencies]
+gpu = ["flash-attn>=2.5"]       # fused attention on NVIDIA GPUs; build needs CUDA and torch installed first
+wandb = ["wandb>=0.17,<1"]      # optional training logger (HEP4M_LOGGER=wandb)
+comet = ["comet-ml>=3.35"]      # optional training logger (HEP4M_LOGGER=comet)
+dev = ["pytest>=7"]
+
+[project.urls]
+Source = "https://github.com/FM-for-HEP/hep-any2any"
+
+[tool.setuptools.packages.find]
+include = ["hep4m*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "data: needs the released tokeniser checkpoints and tokenised store (HEP4M_DATA); skipped when absent",
+    "workflow: end-to-end CPU smoke tests of tokenise, train, infer and judge on tiny inputs",
+]

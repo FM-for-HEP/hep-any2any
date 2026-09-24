@@ -1,0 +1,71 @@
+project_name: hep-any2any
+run_name: nanohep_pflow
+base_root_dir: ${HEP4M_RUNS}
+
+device: cuda
+num_devices: 4
+trainer_precision: bf16-mixed
+num_epochs: 5001
+max_steps: 360000
+eval_every_n_epoch: 1
+val_check_interval: 4000
+periodic_checkpoint_interval: 5
+step_checkpoint_interval: 1000
+accumulate_grad_batches: 2
+
+gpt_config:
+    block_size: 640
+    vocab_size: null
+    n_layer: 12
+    n_head: 12
+    n_embd: 768
+    dropout: 0.0
+    bias: false
+
+vocab_args:
+    modalities: [topo, track, truthpart]
+
+optimizer_args:
+    learning_rate: 1.2e-3
+    weight_decay: 0.1
+    betas: [0.9, 0.95]
+    lr_schedule:                 # linear warm-up, then cosine decay to floor
+        peak: 1.2e-3
+        floor: 1.2e-4
+        warmup_steps: 2000
+        decay_steps: 350000
+
+tokenized_root: ${HEP4M_TOKENIZED}
+all_modalities: [topo, track, truthpart]
+block_size: 320
+batch_size: 128
+num_workers: 8
+mp_share_strategy: file_system
+max_events_train: -1
+max_events_val: 4096
+
+sampling_dict:
+    type: inference
+    fixed_input_output_modalities:
+        input: [topo, track]
+        output: [truthpart]
+    output_layout: interleaved
+    input_layout: interleaved
+
+pflow_eval:
+    enabled: true
+    every_n_epochs: 1
+    min_interval_min: 20
+    max_events: 256
+    input_modalities: [topo, track]
+    output_modality: truthpart
+    output_layout: interleaved
+    max_new_tokens: 320
+    batch_size: 32
+    modality_dict_path: ${HEP4M_REPO}/configs/modality_dicts/3mod.yml
+
+early_stopping:
+  enabled: false
+  monitor: val_loss
+  patience: 15
+  min_delta: 0.001

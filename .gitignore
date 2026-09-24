@@ -1,0 +1,26 @@
+# local configuration and data
+.env
+data/
+work/
+outputs/
+plot_dump/
+lightning_logs/
+wandb/
+*.ckpt
+*.root
+tests/unit/fixtures/singlejet_fixture_1000events.root
+tests/unit/fixtures/tokenized_100events/
+fixtures.tar.zst
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+
+# pixi
+.pixi/

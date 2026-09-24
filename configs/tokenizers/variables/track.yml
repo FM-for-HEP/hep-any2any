@@ -1,0 +1,76 @@
+detector: COCOA
+modality: track
+
+
+# input features to the network
+features:
+    track_feat0: [
+        20,
+        [track_pt, track_d0, track_z0],
+        [], # categorical: [[var_name, num_classes], ...]
+        [track_eta, track_cosphi, track_sinphi] # postition tokenization
+    ]
+sort_by_var: track_pt
+
+
+# reading the tree
+data_loading:
+    branches_to_read: [
+        track_pt, track_eta, track_phi, track_d0, track_z0,
+        particle_eta, particle_phi,
+        eventNumber]
+    branches_store_raw: [track_pt, track_eta]
+    branches_rename: {
+        eventNumber: event_number
+    }
+
+
+# processing in dataset.__init__
+data_processing:
+    vars_sin_cos: [
+        track_phi]
+    vars_sin_cos_og_delete: []
+    vars_relatives: {}
+    cuts:
+        ref_eta_var: particle_eta
+        ref_eta_var2: track_eta
+        eta_var: track_eta # cuts on this
+
+        ref_phi_var: particle_phi
+        ref_phi_var2: track_phi
+        phi_var: track_phi # cuts on this
+
+        deta_min: -0.75
+        deta_max: 0.75
+        dphi_min: -0.75
+        dphi_max: 0.75
+
+        vars_to_delete: [particle_eta, particle_phi]
+
+    vars_to_transform: [
+        track_pt, track_d0, track_z0]
+
+
+# additional variables that dataset.__getitem__ returns
+getitem_return: []
+
+
+transformation_dict:
+    track_pt: {
+        transformation: 'pow(x,m)',
+        m: 0.5,
+        scale_mode: min_max,
+        mean: null, std: null,
+        min: 0.962, max: 15.619, range: [-1,1]}
+
+    track_d0: {
+        transformation: null,
+        scale_mode: min_max, # standard
+        mean: 0, std: 0.0317,
+        min: -0.2, max: 0.2, range: [-1,1]}
+
+    track_z0: {
+        transformation: null,
+        scale_mode: min_max, # standard
+        mean: 0, std: 0.0863,
+        min: -0.4, max: 0.4, range: [-1,1]}

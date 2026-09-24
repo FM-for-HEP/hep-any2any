@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    env:
+      MPLBACKEND: Agg
+      WANDB_MODE: disabled
+      # no data in CI: tests that need HEP4M_DATA, tokeniser checkpoints or fixtures are skipped
+      HEP4M_DATA: ${{ github.workspace }}/ci-data
+      HEP4M_WORK: ${{ github.workspace }}/ci-work
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install (CPU PyTorch)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu \
+            --extra-index-url https://pypi.org/simple -e ".[dev]"
+
+      - name: Test fixtures
+        # fixtures.tar.zst in the Zenodo record unpacks to tests/unit/fixtures/:
+        # singlejet_fixture_1000events.root and tokenized_100events/. When the file cannot be
+        # fetched, or its sha256 does not match, the fixture-based tests are skipped.
+        env:
+          FIXTURES_URL: https://zenodo.org/records/22917591/files/fixtures.tar.zst?download=1
+          FIXTURES_SHA256: "9c5dcfeeaeb93f4bcdaaf09b631546a2a68212a36ff64c8b2f7afedd5b940510"
+        run: |
+          if curl -fsSL --retry 3 "$FIXTURES_URL" -o fixtures.tar.zst \
+              && echo "$FIXTURES_SHA256  fixtures.tar.zst" | sha256sum -c -; then
+            tar --zstd -xf fixtures.tar.zst -C tests/unit/fixtures
+          else
+            echo "::warning::test fixtures not available; fixture-based tests will be skipped"
+          fi
+
+      - name: Run tests
+        run: python -m pytest tests -rs --durations=10

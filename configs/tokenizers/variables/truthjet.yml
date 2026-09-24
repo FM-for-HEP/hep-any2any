@@ -1,0 +1,59 @@
+detector: COCOA
+modality: truthjet
+data_type: global
+
+
+# input features to the network
+features:
+    truthjet_feat0: [
+        1,
+        [truthjet_pt, truthjet_e], # continuous
+        [], # categorical: [[var_name, num_classes], ...]
+        [truthjet_eta, truthjet_cosphi, truthjet_sinphi]
+    ]
+sort_by_var: null
+
+# for 4m training, one set of position token, but many tokens per event
+repeat_pos_tokens: true
+
+
+# reading the tree
+data_loading:
+    branches_to_read: [
+        particle_pt, particle_eta, particle_phi, particle_e,
+        eventNumber]
+    branches_store_raw: []
+
+    # {modality}_{feature}; eg truthjet_pt
+    branches_rename: {
+        eventNumber: event_number
+    }
+
+
+# processing in dataset.__init__
+data_processing:
+    vars_sin_cos: [truthjet_phi]
+    vars_sin_cos_og_delete: []
+    vars_relatives: {}
+    cuts: null # no cuts
+    vars_to_transform: [truthjet_pt, truthjet_e]
+
+
+# additional variables that dataset.__getitem__ returns
+getitem_return: []
+
+
+transformation_dict:
+    truthjet_pt: {
+        transformation: 'pow(x,m)',
+        m: 0.5,
+        scale_mode: min_max,
+        mean: null, std: null,
+        min: 0.962, max: 15.619, range: [-3,3]}
+
+    truthjet_e: { # lolox - lolox
+        transformation: 'pow(x,m)',
+        m: 0.5,
+        scale_mode: min_max,
+        mean: 0.289, std: 0.375,
+        min: 0, max: 33.742, range: [-3,3]}

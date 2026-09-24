@@ -1,0 +1,74 @@
+detector: COCOA
+modality: truthpart
+
+
+# input features to the network
+features:
+    truthpart_feat0: [
+        32,
+        [truthpart_pt, truthpart_e], # continuous
+        [[truthpart_class, 3]], # categorical: [[var_name, num_classes], ...]
+        [truthpart_eta, truthpart_cosphi, truthpart_sinphi] # position tokenization
+    ]
+sort_by_var: truthpart_pt
+
+
+# reading the tree
+data_loading:
+    branches_to_read: [
+        particle_pt, particle_eta, particle_phi, particle_pdgid, particle_e, particle_track_idx,
+        eventNumber]
+    branches_store_raw: [truthpart_pt, truthpart_eta, truthpart_e]
+
+    # {modality}_{feature}; eg truthpart_pt
+    branches_rename: {
+        particle_pt: truthpart_pt,
+        particle_eta: truthpart_eta,
+        particle_phi: truthpart_phi,
+        particle_e: truthpart_e,
+        eventNumber: event_number
+    }
+
+
+# processing in dataset.__init__
+data_processing:
+    vars_sin_cos: [truthpart_phi]
+    vars_sin_cos_og_delete: []
+    vars_relatives: {}
+    cuts:
+        ref_eta_var: truthpart_eta
+        ref_eta_var2: truthpart_eta
+        eta_var: truthpart_eta # cuts on this
+
+        ref_phi_var: truthpart_phi
+        ref_phi_var2: truthpart_phi
+        phi_var: truthpart_phi # cuts on this
+
+        deta_min: -0.75
+        deta_max: 0.75
+        dphi_min: -0.75
+        dphi_max: 0.75
+
+        vars_to_delete: []
+
+    vars_to_transform: [truthpart_pt, truthpart_e]
+
+
+# additional variables that dataset.__getitem__ returns
+getitem_return: []
+
+
+transformation_dict:
+    truthpart_pt: {
+        transformation: 'pow(x,m)',
+        m: 0.5,
+        scale_mode: min_max,
+        mean: null, std: null,
+        min: 0.962, max: 15.619, range: [-3,3]}
+
+    truthpart_e: {
+        transformation: 'pow(x,m)',
+        m: 0.5,
+        scale_mode: min_max,
+        mean: 0.289, std: 0.375,
+        min: 0, max: 33.742, range: [-3,3]}

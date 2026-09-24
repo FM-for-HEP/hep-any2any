@@ -1,0 +1,21 @@
+# Tokenise the track objects of raw COCOA ROOT files with the frozen track tokeniser.
+#   python -m hep4m.eval_tokenizer -i configs/tokenize/track.yml [--gpu -1]
+# Output: ${HEP4M_WORK}/tokenized_root/track/<dir_flag>/<input file name>
+init:
+  gpu: 0                 # -1: CPU
+  precision: highest
+  chunk_size: 128
+  batch_size: 128
+  num_workers: 0
+  output_dir: ${HEP4M_WORK}/tokenized_root/track
+
+  model:
+    config_path_v   : ${HEP4M_TOKENIZERS}/vqxtrackx256x8x1xxx1tkosl645s31y/config_v.yml
+    config_path_m   : ${HEP4M_TOKENIZERS}/vqxtrackx256x8x1xxx1tkosl645s31y/config_m.yml
+    checkpoint_path : ${HEP4M_TOKENIZERS}/vqxtrackx256x8x1xxx1tkosl645s31y/checkpoints/epoch=49-val_total_loss=0.0000.ckpt
+
+items:
+  - info: test file singlejet_0
+    input_path: ${HEP4M_RAW_TEST}
+    dir_flag: test
+    reduce_ds: -1        # number of events, -1: all

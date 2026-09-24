@@ -1,0 +1,76 @@
+detector: COCOA
+modality: topo
+
+
+# input features to the network
+features:
+    topo_feat0: [
+        70, 
+        [topo_e, topo_rho, topo_em_frac],
+        [[topo_em_category, 3]], # categorical: [[var_name, num_classes], ...]
+        [topo_eta, topo_cosphi, topo_sinphi] # position tokenization
+    ]   
+sort_by_var: topo_e
+
+
+# reading the tree
+data_loading:
+    branches_to_read: [
+        topo_eta, topo_phi, topo_e, topo_rho, 
+        particle_eta, particle_phi,
+        topo_ecal_e, topo_hcal_e,
+        eventNumber]
+    branches_store_raw: [topo_e, topo_eta]
+    branches_rename: {
+        eventNumber: event_number
+    }
+
+
+# processing in dataset.__init__
+data_processing:
+    vars_sin_cos: [topo_phi]
+    vars_sin_cos_og_delete: []
+    vars_relatives: {}
+    cuts:
+        ref_eta_var: particle_eta
+        ref_eta_var2: topo_eta
+        eta_var: topo_eta # cuts on this
+
+        ref_phi_var: particle_phi
+        ref_phi_var2: topo_phi
+        phi_var: topo_phi # cuts on this
+
+        deta_min: -0.75
+        deta_max: 0.75
+        dphi_min: -0.75
+        dphi_max: 0.75
+
+        vars_to_delete: [particle_eta, particle_phi]
+
+    vars_to_transform: [
+        topo_e, topo_rho, topo_em_frac]
+
+
+# additional variables that dataset.__getitem__ returns
+getitem_return: []
+
+
+transformation_dict:
+    topo_e: {
+        transformation: "pow(x,m)",
+        m: 0.5,
+        scale_mode: min_max,
+        mean: null, std: null,
+        min: 1, max: 15, range: [-1,1]}
+
+    topo_rho: {
+        transformation: null,
+        scale_mode: min_max,
+        mean: 1905.900, std: 484.053,
+        min: 1547.056, max: 3824.707, range: [-1,1]}
+
+    topo_em_frac: {
+        transformation: inv_sigmoid,
+        scale_mode: min_max,
+        mean: null, std: null,
+        min: -13.8, max: 13.8, range: [-1,1]}

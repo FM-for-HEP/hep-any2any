@@ -1,0 +1,68 @@
+detector: COCOA
+modality: hgpfpart
+
+
+# input features to the network
+features:
+    hgpfpart_feat0: [
+        40,
+        [hgpfpart_pt], # continuous
+        [[hgpfpart_class, 3]], # categorical: [[var_name, num_classes], ...]
+        [hgpfpart_eta, hgpfpart_cosphi, hgpfpart_sinphi] # position tokenization
+    ]
+sort_by_var: hgpfpart_pt
+
+
+# reading the tree
+data_loading:
+    branches_to_read: [
+        hgpflow_pt, hgpflow_eta, hgpflow_phi, hgpflow_class,
+        proxy_eta, proxy_phi, proxy_pt,
+        truth_eta, truth_phi,
+        event_number]
+    branches_store_raw: [hgpfpart_pt, hgpfpart_eta]
+
+    # {modality}_{feature}; eg truthpart_pt
+    branches_rename: {
+        hgpflow_pt: hgpfpart_pt,
+        hgpflow_eta: hgpfpart_eta,
+        hgpflow_phi: hgpfpart_phi,
+        hgpflow_class: hgpfpart_class
+    }
+
+
+# processing in dataset.__init__
+data_processing:
+    vars_sin_cos: [hgpfpart_phi]
+    vars_sin_cos_og_delete: []
+    vars_relatives: {}
+    cuts:
+        ref_eta_var: truth_eta
+        ref_eta_var2: hgpfpart_eta
+        eta_var: hgpfpart_eta # cuts on this
+
+        ref_phi_var: truth_phi
+        ref_phi_var2: hgpfpart_phi
+        phi_var: hgpfpart_phi # cuts on this
+
+        deta_min: -0.75
+        deta_max: 0.75
+        dphi_min: -0.75
+        dphi_max: 0.75
+
+        vars_to_delete: [truth_eta, truth_phi]
+
+    vars_to_transform: [hgpfpart_pt]
+
+
+# additional variables that dataset.__getitem__ returns
+getitem_return: []
+
+
+transformation_dict:
+    hgpfpart_pt: {
+        transformation: 'pow(x,m)',
+        m: 0.5,
+        scale_mode: min_max,
+        mean: null, std: null,
+        min: 1.0, max: 15.05, range: [-3,3]}

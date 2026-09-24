@@ -1,0 +1,36 @@
+project_name: hep-any2any
+run_name: tokenizer_truthjet
+
+dataset: singlejet
+
+device: cuda
+num_devices: 1
+
+path_train: |
+    [f'${HEP4M_RAW_TRAIN}/singlejet_{n}_100kseg_bw100.0.root' for n in range(270, 470)]
+path_val: |
+    ['${HEP4M_RELEASE}/eval.raw_val_singlejet_10_100kseg_bw100.0.root']
+
+reduce_ds_train: -1 # integers (1, ) | all (-1)
+reduce_ds_val  : -1 # integers (1, ) | all (-1)
+
+batchsize_train: 131072
+batchsize_val: 131072
+
+num_workers: 15
+
+num_epochs: 51
+eval_every_n_epoch: 1
+train_log_every_n_steps: 50
+
+learning_rate: 5.0e-4
+weight_decay: 0.05
+
+warmup_step_frac: 0.02
+div_factor: 50.0
+final_div_factor: 100.0
+
+reco_loss_wt: 1
+embedding_loss_wt: 1
+
+base_root_dir : ${HEP4M_RUNS}

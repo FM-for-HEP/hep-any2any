@@ -1,0 +1,159 @@
+# HEP4M-multi, eight directions from the same weights, with the decoding settings chosen
+# per direction for this model (card_topk 7 / top-k token sampling / cell-indicator
+# thresholds; see the comments in HEP4M-multi.yml for the key meanings). HEP4M-multi.yml
+# has the plain argmax (particle flow) and sampled (simulation) settings. The hgpfpart
+# inputs/targets are the HGPflow predictions on the test events
+# (python -m hep4m.data download --raw-test fetches both files).
+#   python -m hep4m.eval_hep4m -i configs/infer/HEP4M-multi-tasks.yml [--gpu -1] [--items 0,1]
+init:
+  device: cuda
+  gpu: 0                 # -1: CPU
+  precision: highest
+  chunk_size: 64
+  batch_size: 64
+  num_workers: 2
+  output_dir: ${HEP4M_OUTPUT_ROOT}/inference/HEP4M-multi-tasks
+
+  model:                 # unpacked by: python -m hep4m.data download --checkpoints HEP4M-multi
+    config_path_m: ${HEP4M_CKPT}/ckpt.HEP4M-multi/config_m.yml
+    checkpoint_path: ${HEP4M_CKPT}/ckpt.HEP4M-multi/model.ckpt
+    modality_dict_path: ${HEP4M_CKPT}/ckpt.HEP4M-multi/modality_dict.yml
+
+items:
+- info: 'pflow: topo, track -> truthpart'
+  input_modalities: [topo, track]
+  output_modalities: [truthpart]
+  use_truth_cardinality: false
+  card_topk_dict: {truthpart: 7}
+  card_temperature_dict: {truthpart: 1.0}
+  top_k_token_dict: {truthpart: 1}
+  temperature_token_dict: {truthpart: 1.0}
+  top_k_gpos_token_dict: {truthpart: 1}
+  temperature_gpos_token_dict: {truthpart: 1.0}
+  filepath_dict:
+    topo: '[''${HEP4M_RAW_TEST}'']'
+    track: '[''${HEP4M_RAW_TEST}'']'
+    truthpart: '[''${HEP4M_RAW_TEST}'']'
+  dir_flag: pflow
+  suffix: prediction
+  reduce_ds: -1
+- info: 'sim: truthpart -> topo, track'
+  input_modalities: [truthpart]
+  output_modalities: [topo, track]
+  use_truth_cardinality: false
+  card_topk_dict: {topo: 20, track: 3}
+  card_temperature_dict: {topo: 1.0, track: 1.0}
+  top_k_token_dict: {topo: 64, track: 96}
+  temperature_token_dict: {topo: 1.0, track: 1.0}
+  top_k_gpos_token_dict: {topo: 8, track: 8}
+  temperature_gpos_token_dict: {topo: 1.0, track: 1.0}
+  filepath_dict:
+    truthpart: '[''${HEP4M_RAW_TEST}'']'
+    topo: '[''${HEP4M_RAW_TEST}'']'
+    track: '[''${HEP4M_RAW_TEST}'']'
+  dir_flag: sim
+  suffix: prediction
+  reduce_ds: -1
+- info: 'hgpflow: topo, track -> hgpfpart'
+  input_modalities: [topo, track]
+  output_modalities: [hgpfpart]
+  use_truth_cardinality: false
+  card_topk_dict: {hgpfpart: 7}
+  card_temperature_dict: {hgpfpart: 1.0}
+  top_k_token_dict: {hgpfpart: 1}
+  temperature_token_dict: {hgpfpart: 1.0}
+  top_k_gpos_token_dict: {hgpfpart: 1}
+  temperature_gpos_token_dict: {hgpfpart: 1.0}
+  filepath_dict:
+    hgpfpart: '[''${HEP4M_RELEASE}/eval.hgpflow_pred_singlejet_0_100kseg_bw100.0_merged.root'']'
+    topo: '[''${HEP4M_RAW_TEST}'']'
+    track: '[''${HEP4M_RAW_TEST}'']'
+  dir_flag: hgpflow
+  suffix: prediction
+  reduce_ds: -1
+- info: 'hgpflow_to_truth: hgpfpart -> truthpart'
+  input_modalities: [hgpfpart]
+  output_modalities: [truthpart]
+  use_truth_cardinality: false
+  card_topk_dict: {truthpart: 7}
+  card_temperature_dict: {truthpart: 1.0}
+  top_k_token_dict: {truthpart: 1}
+  temperature_token_dict: {truthpart: 1.0}
+  top_k_gpos_token_dict: {truthpart: 1}
+  temperature_gpos_token_dict: {truthpart: 1.0}
+  filepath_dict:
+    hgpfpart: '[''${HEP4M_RELEASE}/eval.hgpflow_pred_singlejet_0_100kseg_bw100.0_merged.root'']'
+    truthpart: '[''${HEP4M_RAW_TEST}'']'
+  dir_flag: hgpflow_to_truth
+  suffix: prediction
+  reduce_ds: -1
+- info: 'jet_to_particles: truthjet -> truthpart'
+  input_modalities: [truthjet]
+  output_modalities: [truthpart]
+  use_truth_cardinality: false
+  card_topk_dict: {truthpart: 7}
+  card_temperature_dict: {truthpart: 1.0}
+  top_k_token_dict: {truthpart: 1}
+  temperature_token_dict: {truthpart: 1.0}
+  top_k_gpos_token_dict: {truthpart: 1}
+  temperature_gpos_token_dict: {truthpart: 1.0}
+  filepath_dict:
+    truthjet: '[''${HEP4M_RAW_TEST}'']'
+    truthpart: '[''${HEP4M_RAW_TEST}'']'
+  dir_flag: jet_to_particles
+  suffix: prediction
+  reduce_ds: -1
+- info: 'particles_to_jet: truthpart -> truthjet'
+  input_modalities: [truthpart]
+  output_modalities: [truthjet]
+  use_truth_cardinality: false
+  card_topk_dict: {truthjet: 7}
+  card_temperature_dict: {truthjet: 1.0}
+  top_k_token_dict: {truthjet: 1}
+  temperature_token_dict: {truthjet: 1.0}
+  top_k_gpos_token_dict: {truthjet: 1}
+  temperature_gpos_token_dict: {truthjet: 1.0}
+  filepath_dict:
+    truthjet: '[''${HEP4M_RAW_TEST}'']'
+    truthpart: '[''${HEP4M_RAW_TEST}'']'
+  dir_flag: particles_to_jet
+  suffix: prediction
+  reduce_ds: -1
+- info: 'cell_sim: truthpart, track -> cell'
+  input_modalities: [truthpart, track]
+  output_modalities: [cell]
+  use_truth_cardinality: false
+  use_truth_image_indicator: false
+  cellind_logit_threshold_dict: {cell: -0.7}
+  card_topk_dict: {cell: 1}
+  card_temperature_dict: {cell: 1.0}
+  top_k_token_dict: {cell: 128}
+  temperature_token_dict: {cell: 1.0}
+  top_k_gpos_token_dict: {cell: 128}
+  temperature_gpos_token_dict: {cell: 1.0}
+  filepath_dict:
+    cell: '[''${HEP4M_RAW_TEST}'']'
+    track: '[''${HEP4M_RAW_TEST}'']'
+    truthpart: '[''${HEP4M_RAW_TEST}'']'
+  dir_flag: cell_sim
+  suffix: prediction
+  reduce_ds: -1
+- info: 'cell_truth: track, cell -> celltruth'
+  input_modalities: [track, cell]
+  output_modalities: [celltruth]
+  use_truth_cardinality: false
+  use_truth_image_indicator: true
+  cellind_logit_threshold_dict: {celltruth: -0.7}
+  card_topk_dict: {celltruth: 1}
+  card_temperature_dict: {celltruth: 1.0}
+  top_k_token_dict: {celltruth: 1}
+  temperature_token_dict: {celltruth: 1.0}
+  top_k_gpos_token_dict: {celltruth: 1}
+  temperature_gpos_token_dict: {celltruth: 1.0}
+  filepath_dict:
+    cell: '[''${HEP4M_RAW_TEST}'']'
+    celltruth: '[''${HEP4M_RAW_TEST}'']'
+    track: '[''${HEP4M_RAW_TEST}'']'
+  dir_flag: cell_truth
+  suffix: prediction
+  reduce_ds: -1

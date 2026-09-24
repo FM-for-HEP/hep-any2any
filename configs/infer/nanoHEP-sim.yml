@@ -1,0 +1,35 @@
+# nanoHEP-sim: detector simulation, truth particles -> (topo, track), sampled at temperature 1.
+#   python -m hep4m.eval_hep4m -i configs/infer/nanoHEP-sim.yml [--gpu -1] [--items 0]
+init:
+  model_type: nano_hep
+  device: cuda
+  gpu: 0                 # -1: CPU
+  precision: highest
+  chunk_size: 128
+  batch_size: 32
+  output_dir: ${HEP4M_OUTPUT_ROOT}/inference/nanoHEP-sim
+
+  model:                 # unpacked by: python -m hep4m.data download --checkpoints nanoHEP-sim
+    checkpoint_path: ${HEP4M_CKPT}/ckpt.nanoHEP-sim/model.ckpt
+    modality_dict_path: ${HEP4M_REPO}/configs/modality_dicts/3mod.yml   # the tokenisers of this model
+
+  nano_hep:
+    tokenized_root: ${HEP4M_TOKENIZED}
+    split: test
+    max_events: -1       # -1: all events of the split
+
+items:
+  - info: detector simulation, sampled
+    sampling_dict:
+      type: inference
+      fixed_input_output_modalities:
+        input: [truthpart]
+        output: [topo, track]
+      output_layout: grouped
+      input_layout: grouped
+    temperature: 1.0
+    argmax: false
+    structural_decode: true
+    max_new_tokens: 1024
+    dir_flag: sim
+    suffix: sampled

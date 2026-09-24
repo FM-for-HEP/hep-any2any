@@ -1,0 +1,70 @@
+detector: COCOA
+modality: celltruth
+data_type: cell_image
+
+
+# input features to the network
+features:
+    celltruth_feat0: [
+        156, # ignored 
+        [celltruth_ch_e_frac],
+        [], # doesn't support categorical
+        []
+    ]   
+sort_by_var: null
+
+# patch size is 2^pow2_scale x 2^pow2_scale
+pow2_scale: [3, 3, 3, 3, 3, 2]
+
+
+# reading the tree
+data_loading:
+    branches_to_read: [
+        cell_eta, cell_phi, cell_e, cell_calo_region,
+        particle_eta, particle_phi, cell_che, cell_nue,
+        eventNumber]
+    branches_store_raw: [celltruth_meas_e]
+    branches_rename: {
+        cell_e: celltruth_meas_e,
+        cell_eta: celltruth_eta,
+        cell_phi: celltruth_phi,
+        cell_calo_region: celltruth_layer,
+        eventNumber: event_number
+    }
+
+
+# processing in dataset.__init__
+data_processing:
+    vars_sin_cos: []
+    vars_sin_cos_og_delete: []
+    vars_relatives: {}
+    cuts:
+        ref_eta_var: particle_eta
+        ref_eta_var2: celltruth_eta
+        eta_var: celltruth_eta # cuts on this
+
+        ref_phi_var: particle_phi
+        ref_phi_var2: celltruth_phi
+        phi_var: celltruth_phi # cuts on this
+
+        deta_min: -0.75
+        deta_max: 0.75
+        dphi_min: -0.75
+        dphi_max: 0.75
+
+        vars_to_delete: [particle_eta, particle_phi]
+
+    store_pos_relatives: true
+    vars_to_transform: [celltruth_ch_e_frac]
+
+
+# additional variables that dataset.__getitem__ returns
+getitem_return: []
+
+
+transformation_dict:
+    celltruth_ch_e_frac: {
+        transformation: inv_sigmoid,
+        scale_mode: min_max,
+        mean: null, std: null,
+        min: -13.8, max: 13.8, range: [0.5, 1.5]}

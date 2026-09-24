@@ -1,0 +1,59 @@
+project_name: hep-any2any
+run_name: nanohep_multi
+base_root_dir: ${HEP4M_RUNS}
+device: cuda
+num_devices: 4
+trainer_precision: bf16-mixed
+num_epochs: 5001
+eval_every_n_epoch: 1
+val_check_interval: 3500
+periodic_checkpoint_interval: 5
+step_checkpoint_interval: 1000
+accumulate_grad_batches: 8
+pflow_eval:
+  enabled: true
+  every_n_epochs: 1
+  min_interval_min: 30
+  max_events: 256
+  input_modalities: [topo, track]
+  output_modality: truthpart
+  output_layout: grouped
+  max_new_tokens: 512
+  batch_size: 16
+  modality_dict_path: ${HEP4M_REPO}/configs/modality_dicts/7mod.yml
+# model ctx 2560 = dataset block 2432 + AR decode margin
+gpt_config: {block_size: 2560, vocab_size: null, n_layer: 12, n_head: 12, n_embd: 768,
+  dropout: 0.0, bias: false}
+vocab_args:
+  modalities: [topo, track, truthpart, truthjet, hgpfpart, cell, celltruth]
+optimizer_args:
+  learning_rate: 0.0012
+  weight_decay: 0.1
+  betas: [0.9, 0.95]
+  lr_schedule: {peak: 0.0012, floor: 0.00012, warmup_steps: 2000, decay_steps: 285000}
+tokenized_root: ${HEP4M_TOKENIZED}
+all_modalities: [topo, track, truthpart, truthjet, hgpfpart, cell, celltruth]
+block_size: 2432
+batch_size: 32
+num_workers: 2
+max_events_train: -1
+max_events_val: 4096
+sampling_dict:
+  type: inference_rand2
+  fixed_input_output_modalities:
+    input: [topo, track]
+    output: [truthpart]
+  max_inp_modality: 3
+  max_out_modality: 3
+  fixed_frac: 0.10
+  output_layout: grouped
+  input_layout: grouped
+max_steps: 300000
+
+early_stopping:
+  enabled: false
+  monitor: val_loss
+  patience: 15
+  min_delta: 0.001
+
+log_every_n_steps: 200

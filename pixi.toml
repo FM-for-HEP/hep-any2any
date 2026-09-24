@@ -1,0 +1,26 @@
+# Optional pixi environments. Dependencies come from pyproject.toml; only torch is chosen here.
+#   pixi install            (CUDA)      pixi install -e cpu      (CPU only)
+#   pixi run -e cpu test
+[workspace]
+name = "hep-any2any"
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[dependencies]
+python = ">=3.11,<3.13"
+
+[pypi-dependencies]
+hep-any2any = { path = ".", editable = true, extras = ["dev"] }
+
+[feature.cuda.pypi-dependencies]
+torch = ">=2.4,<3"
+
+[feature.cpu.pypi-dependencies]
+torch = { version = ">=2.4,<3", index = "https://download.pytorch.org/whl/cpu" }
+
+[tasks]
+test = "python -m pytest tests"
+
+[environments]
+default = ["cuda"]
+cpu = ["cpu"]

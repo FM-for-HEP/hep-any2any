@@ -1,0 +1,36 @@
+# nanoHEP-pflow trained for 29.6k steps (the particle-flow share of nanoHEP-multi's steps);
+# same task and decoding as nanoHEP-pflow.
+#   python -m hep4m.eval_hep4m -i configs/infer/nanoHEP-pflow-matched30k.yml [--gpu -1] [--items 0]
+init:
+  model_type: nano_hep
+  device: cuda
+  gpu: 0                 # -1: CPU
+  precision: highest
+  chunk_size: 128
+  batch_size: 64
+  output_dir: ${HEP4M_OUTPUT_ROOT}/inference/nanoHEP-pflow-matched30k
+
+  model:                 # unpacked by: python -m hep4m.data download --checkpoints nanoHEP-pflow-matched30k
+    checkpoint_path: ${HEP4M_CKPT}/ckpt.nanoHEP-pflow-matched30k/model.ckpt
+    modality_dict_path: ${HEP4M_REPO}/configs/modality_dicts/3mod.yml   # the tokenisers of this model
+
+  nano_hep:
+    tokenized_root: ${HEP4M_TOKENIZED}
+    split: test
+    max_events: -1       # -1: all events of the split
+
+items:
+  - info: particle flow, argmax
+    sampling_dict:
+      type: inference
+      fixed_input_output_modalities:
+        input: [track, topo]
+        output: [truthpart]
+      output_layout: interleaved
+      input_layout: interleaved
+    temperature: 1.0
+    argmax: true
+    structural_decode: true
+    max_new_tokens: 512
+    dir_flag: pflow
+    suffix: argmax

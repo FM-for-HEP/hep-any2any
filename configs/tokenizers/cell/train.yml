@@ -1,0 +1,35 @@
+project_name: hep-any2any
+run_name: tokenizer_cell
+
+dataset: singlejet
+
+device: cuda
+num_devices: 2
+
+use_npy_dataset: true
+path_train: '${HEP4M_RAW_TRAIN}/cells_numpy/cell/train_data.npy'
+path_val: '${HEP4M_RAW_TRAIN}/cells_numpy/cell/val_data.npy'
+
+reduce_ds_train: -1 # integers (1, ) | all (-1)
+reduce_ds_val  : -1 # integers (1, ) | all (-1)
+
+batchsize_train: 512
+batchsize_val: 512
+
+num_workers: 9
+
+num_epochs: 51
+eval_every_n_epoch: 1
+train_log_every_n_steps: 50
+
+learning_rate: 5.0e-4
+weight_decay: 0.05
+
+warmup_step_frac: 0.02
+div_factor: 50.0
+final_div_factor: 100.0
+
+reco_loss_wt: 1
+embedding_loss_wt: 1
+
+base_root_dir : ${HEP4M_RUNS}

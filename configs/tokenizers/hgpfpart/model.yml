@@ -1,0 +1,81 @@
+n_feat_cont: &n_feat_cont 1
+common_emb_dim: &emb_dim 128
+codebook_dim: &codebook_dim 8
+enable_flash_attn: &flash_attn True
+
+categorical_vars: [hgpfpart_class]
+categorical:
+    hgpfpart_class: [3, 3]
+
+
+encoder:
+    init_net:
+        input_size: null
+        output_size: *emb_dim
+        hidden_layers: [64]
+        activation: LeakyReLU
+        final_activation: null
+        norm_layer: null # LayerNorm
+        norm_final_layer: false
+        dropout: 0.0
+        context_size: 0
+
+    transformer: # with GLU
+        embed_dim: *emb_dim
+        num_layers: 8
+        mha_config:   
+            enable_flash_attn: *flash_attn
+            num_heads: 4
+        dense_config: 
+            embed_dim: *emb_dim
+            hidden_dim: *emb_dim
+        out_dim: *emb_dim
+        layer_scale: true
+        apply_norm_after_last_proj: true
+
+
+quantizer:
+    type: ResidualVQ
+    dim: *emb_dim
+    num_quantizers: 3
+    codebook_dim: *codebook_dim
+    codebook_size: 128
+    kmeans_init: True
+
+
+decoder:
+    transformer: # with GLU
+        embed_dim: *emb_dim
+        num_layers: 8
+        mha_config:   
+            enable_flash_attn: *flash_attn
+            num_heads: 4
+        dense_config: 
+            embed_dim: *emb_dim
+            hidden_dim: *emb_dim
+        out_dim: *emb_dim
+        layer_scale: true
+        apply_norm_after_last_proj: true
+
+    output_net_cont:
+        input_size: *emb_dim
+        output_size: *n_feat_cont
+        hidden_layers: [128, 64]
+        activation: LeakyReLU
+        final_activation: null
+        norm_layer: LayerNorm
+        norm_final_layer: false
+        dropout: 0.0
+        context_size: 0
+    
+    output_net_categorical:
+        input_size: *emb_dim
+        output_size: null
+        hidden_layers: [128, 64]
+        activation: LeakyReLU
+        final_activation: null
+        norm_layer: LayerNorm
+        norm_final_layer: false
+        dropout: 0.0
+        context_size: 0
+    

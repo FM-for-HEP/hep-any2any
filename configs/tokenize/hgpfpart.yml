@@ -1,0 +1,21 @@
+# Tokenise the hgpfpart objects of raw COCOA ROOT files with the frozen hgpfpart tokeniser.
+#   python -m hep4m.eval_tokenizer -i configs/tokenize/hgpfpart.yml [--gpu -1]
+# Output: ${HEP4M_WORK}/tokenized_root/hgpfpart/<dir_flag>/<input file name>
+init:
+  gpu: 0                 # -1: CPU
+  precision: highest
+  chunk_size: 128
+  batch_size: 128
+  num_workers: 0
+  output_dir: ${HEP4M_WORK}/tokenized_root/hgpfpart
+
+  model:
+    config_path_v   : ${HEP4M_TOKENIZERS}/vqxhgpartx128x8x2xxxtsgcse59z19u/config_v.yml
+    config_path_m   : ${HEP4M_TOKENIZERS}/vqxhgpartx128x8x2xxxtsgcse59z19u/config_m.yml
+    checkpoint_path : ${HEP4M_TOKENIZERS}/vqxhgpartx128x8x2xxxtsgcse59z19u/checkpoints/epoch=50-val_total_loss=0.0000.ckpt
+
+items:
+  - info: test file singlejet_0
+    input_path: ${HEP4M_RELEASE}/eval.hgpflow_pred_singlejet_0_100kseg_bw100.0_merged.root
+    dir_flag: test
+    reduce_ds: -1        # number of events, -1: all
