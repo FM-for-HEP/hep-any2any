@@ -54,7 +54,7 @@ preferred-citation:
   notes: "arXiv identifier to follow."
 references:
   - type: data
-    title: "HEP4M tokenised COCOA single-jet dataset and model checkpoints"
+    title: "Prompting Particle Physics: Tokenized Multi-modal Foundation Models for Combinatorially Many Tasks"
     doi: 10.5281/zenodo.22917591
     url: "https://doi.org/10.5281/zenodo.22917591"
     publisher:
@@ -66,3 +66,15 @@ references:
         given-names: Nilotpal
       - family-names: Murnane
         given-names: Daniel
+      - family-names: Hashemi
+        given-names: Baran
+      - family-names: Klein
+        given-names: Samuel
+      - family-names: Krupa
+        given-names: Jeffrey
+      - family-names: Gross
+        given-names: Eilam
+      - family-names: Heinrich
+        given-names: Lukas
+      - family-names: Kagan
+        given-names: Michael
