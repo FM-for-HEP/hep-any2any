@@ -531,7 +531,7 @@ If you use this code, please cite the paper:
 
 N. Kakati, D. Murnane, B. Hashemi, S. Klein, J. Krupa, E. Gross, L. Heinrich, M. Kagan,
 "Prompting Particle Physics: Tokenized Multi-modal Foundation Models for Combinatorially Many Tasks" (2026).
-arXiv identifier to follow.
+[arXiv:2609.31862](https://arxiv.org/abs/2609.31862).
 
 `CITATION.cff` has the same entry in machine-readable form.
 

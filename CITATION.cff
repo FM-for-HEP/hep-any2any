@@ -51,7 +51,11 @@ preferred-citation:
     - family-names: Kagan
       given-names: Michael
   year: 2026
-  notes: "arXiv identifier to follow."
+  url: "https://arxiv.org/abs/2609.31862"
+  identifiers:
+    - type: other
+      value: "arXiv:2609.31862"
+      description: "arXiv preprint"
 references:
   - type: data
     title: "Prompting Particle Physics: Tokenized Multi-modal Foundation Models for Combinatorially Many Tasks"
