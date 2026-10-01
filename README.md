@@ -1,7 +1,11 @@
 # hep-any2any: code for "Prompting Particle Physics: Tokenized Multi-modal Foundation Models for Combinatorially Many Tasks"
 
 This repository holds the code for two models that map any set of collider-event
-modalities to any other set. Every object in a jet (tracks, calorimeter cells and
+modalities to any other set. 
+
+**Note: This repository is a snapshot of the project's private development repository, allowing reproduction of the linked paper. It may not be kept maintained.**
+
+Every object in a jet (tracks, calorimeter cells and
 clusters, truth and reconstructed particles, jets) is turned into discrete tokens
 by a frozen per-modality VQ-VAE tokeniser. **nanoHEP** is a decoder-only
 transformer that generates the output tokens autoregressively; **HEP4M** is an
